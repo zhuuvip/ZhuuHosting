@@ -110,14 +110,14 @@ if (process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_ID !== 'placehol
   passport.use(new DiscordStrategy({ clientID: process.env.DISCORD_CLIENT_ID, clientSecret: process.env.DISCORD_CLIENT_SECRET, callbackURL: (process.env.BASE_URL || '') + '/auth/discord/callback', scope: ['identify','email'] }, (a,b,profile,done) => { profile.provider='discord'; handleOAuth(a,b,profile,done); }));
 }
 
-const authMiddleware = require('./middleware/authMiddleware');
+const authMiddleware = require("./middleware/authMiddleware");
 app.use((req, res, next) => { req.readDb = readDb; req.writeDb = writeDb; req.readConfig = readConfig; req.writeConfig = writeConfig; next(); });
 
 app.use('/auth', require('./routes/auth'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/owner', require('./routes/owner'));
-app.use('/api/pterodactyl', require('./routes/pterodactyl'));
+const pteroHelper = require('./routes/pterodactyl');
 
 app.get('/api/config', (req, res) => {
   const config = readConfig();
