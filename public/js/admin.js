@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadCurrentUser() {
-  const { ok, data } = await apiFetch('/auth/me');
+  const { ok, data } = await apiFetch('/api/auth/me');
   if (!ok) { window.location.href = '/login'; return; }
   const u = data.user;
   const avatarEl = document.getElementById('sidebarAvatar');

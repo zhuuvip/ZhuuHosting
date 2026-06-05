@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadUser() {
-  const { ok, data } = await apiFetch('/auth/me');
+  const { ok, data } = await apiFetch('/api/auth/me');
   if (!ok) {
     window.location.href = '/login';
     return;

@@ -31,7 +31,7 @@ async function initOwnerPanel() {
 }
 
 async function loadCurrentOwner() {
-  const { ok, data } = await apiFetch('/auth/me');
+  const { ok, data } = await apiFetch('/api/auth/me');
   if (!ok) { window.location.href = '/login'; return; }
   const u = data.user;
   const nameEl = document.getElementById('ownerName');
