@@ -197,3 +197,10 @@ function showTab(tabName) {
   const panel = document.getElementById(`tab-${tabName}`);
   if (panel) panel.classList.add('active');
 }
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('active');
+}

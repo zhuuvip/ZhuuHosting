@@ -76,3 +76,10 @@ async function apiFetch(url, options = {}) {
     return { ok: false, status: 0, data: { error: 'Koneksi error' } };
   }
 }
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('active');
+}
