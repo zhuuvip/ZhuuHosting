@@ -56,8 +56,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'zhuu_secret',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
