@@ -432,3 +432,31 @@ function setValue(id, val) { const el = document.getElementById(id); if (el && v
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('show');
 });
+
+// Sidebar toggle fix
+document.addEventListener('DOMContentLoaded', function() {
+  const menuToggle = document.querySelector('.menu-toggle') || document.querySelector('.hamburger');
+  const sidebar = document.querySelector('.sidebar') || document.querySelector('#sidebar');
+  
+  if (menuToggle && sidebar) {
+    menuToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('open');
+      sidebar.classList.toggle('active');
+    });
+  }
+
+  // Sidebar nav links
+  const navLinks = document.querySelectorAll('.sidebar a, .sidebar-nav a, nav a[data-tab]');
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const tab = this.getAttribute('data-tab') || this.getAttribute('href');
+      if (tab && tab.startsWith('#')) {
+        e.preventDefault();
+        document.querySelectorAll('.tab-content, .section').forEach(s => s.style.display = 'none');
+        const target = document.querySelector(tab);
+        if (target) target.style.display = 'block';
+      }
+      if (sidebar) sidebar.classList.remove('open', 'active');
+    });
+  });
+});
