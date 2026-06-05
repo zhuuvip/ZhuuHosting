@@ -7,6 +7,12 @@ const path = require('path');
 
 const router = express.Router();
 const DB_PATH = path.join('/tmp', 'db.json');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.SESSION_SECRET || 'zhuu_secret_2077';
+function setJwtCookie(res, user) {
+  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  res.cookie('zhuu_token', token, { httpOnly: true, maxAge: 7*24*60*60*1000, sameSite: 'lax' });
+}
 
 function readDb() {
   try {
@@ -47,12 +53,13 @@ router.post('/login', (req, res, next) => {
     if (user.banned) return res.status(403).json({ error: 'Akun Anda telah diblokir.' });
     req.logIn(user, (err2) => {
       if (err2) return next(err2);
+      setJwtCookie(res, user);
       res.json({ success: true, redirect: '/dashboard' });
     });
   })(req, res, next);
 });
 
-router.get('/logout', (req, res) => { req.logout(() => { res.redirect('/'); }); });
+router.get('/logout', (req, res) => { res.clearCookie('zhuu_token'); req.logout ? req.logout(() => res.redirect('/')) : res.redirect('/'); });
 
 router.get('/me', (req, res) => {
   if (req.isAuthenticated && req.isAuthenticated()) {

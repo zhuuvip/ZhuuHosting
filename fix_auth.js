@@ -1,4 +1,6 @@
-require('dotenv').config();
+const fs = require('fs');
+
+const newServer = `require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
@@ -165,3 +167,7 @@ app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 
 app.listen(PORT, () => console.log('Zhuu Hosting running on port ' + PORT));
 module.exports = app;
+`;
+
+fs.writeFileSync('server.js', newServer);
+console.log('Done');
