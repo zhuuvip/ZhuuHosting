@@ -15,3 +15,4 @@ uploads/
 *.mp4
 fix_*.js
 *.data
+package-lock.json
