@@ -240,3 +240,10 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT:', err.message, err.stack);
+});
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED:', err);
+});
