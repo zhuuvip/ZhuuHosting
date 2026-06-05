@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Panel — Zhuu Hosting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="ocean-bg"></div>
+  <div class="orbs-container">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
+  </div>
+  <div class="bubbles-container">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  </div>
+
+  <!-- PIN MODAL -->
+  <div class="pin-overlay" id="pinOverlay">
+    <div class="glass-card pin-card">
+      <div class="pin-icon">🔐</div>
+      <div class="pin-title" style="font-family:'Cinzel Decorative',cursive;">Owner Access</div>
+      <div class="pin-sub">Masukkan PIN untuk mengakses panel owner</div>
+      <div class="form-group" style="text-align:left;">
+        <input type="password" id="pinInput" class="form-control" placeholder="Masukkan PIN rahasia" maxlength="20" onkeydown="if(event.key==='Enter') verifyPin()">
+      </div>
+      <div id="pinError" class="alert alert-error"></div>
+      <button class="btn btn-primary" style="width:100%;" onclick="verifyPin()">🔓 Masuk</button>
+      <a href="/" style="display:block; text-align:center; margin-top:16px; color:var(--text-muted); font-size:0.85rem;">← Kembali ke Home</a>
+    </div>
+  </div>
+
+  <!-- Topbar mobile -->
+  <div class="topbar" id="topbar">
+    <span class="topbar-brand">👑 Owner</span>
+    <button class="topbar-hamburger" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="app-layout" id="ownerContent" style="display:none;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+      <div class="sidebar-brand">👑 Owner Panel</div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Konfigurasi</div>
+        <a class="nav-item active" onclick="showOwnerTab('stats')" href="javascript:void(0)"><span class="nav-icon">📊</span> Statistik</a>
+        <a class="nav-item" onclick="showOwnerTab('pterodactyl')" href="javascript:void(0)"><span class="nav-icon">🦕</span> Pterodactyl API</a>
+        <a class="nav-item" onclick="showOwnerTab('pricing')" href="javascript:void(0)"><span class="nav-icon">💰</span> Harga</a>
+        <a class="nav-item" onclick="showOwnerTab('payment')" href="javascript:void(0)"><span class="nav-icon">💳</span> Pembayaran</a>
+        <a class="nav-item" onclick="showOwnerTab('branding')" href="javascript:void(0)"><span class="nav-icon">🎨</span> Branding</a>
+        <div class="nav-section-label">Manajemen</div>
+        <a class="nav-item" onclick="showOwnerTab('users')" href="javascript:void(0)"><span class="nav-icon">👥</span> User</a>
+        <a class="nav-item" onclick="showOwnerTab('orders')" href="javascript:void(0)"><span class="nav-icon">📋</span> Order</a>
+        <div class="nav-section-label">Navigasi</div>
+        <a class="nav-item" href="/admin"><span class="nav-icon">⚙️</span> Admin Panel</a>
+        <a class="nav-item" href="/dashboard"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a class="nav-item" href="/auth/logout"><span class="nav-icon">🚪</span> Logout</a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="user-avatar" style="background:linear-gradient(135deg,#ff6b6b,#ff8e53);">👑</div>
+        <div class="user-info">
+          <div class="user-name" id="ownerName">Owner</div>
+          <div class="user-role"><span class="badge badge-owner">owner</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- STATS TAB -->
+      <div id="ownerTab-stats" class="tab-panel active">
+        <div class="page-header">
+          <h2 class="page-title">📊 Statistik Sistem</h2>
+          <p class="page-sub">Overview lengkap platform Zhuu Hosting</p>
+        </div>
+        <div class="stats-grid">
+          <div class="glass-card stat-card">
+            <div class="stat-icon teal">👥</div>
+            <div><div class="stat-value" id="oTotalUsers">0</div><div class="stat-label">Total User</div></div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon gold">📋</div>
+            <div><div class="stat-value" id="oTotalOrders">0</div><div class="stat-label">Total Order</div></div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon aqua">🖥️</div>
+            <div><div class="stat-value" id="oActiveServers">0</div><div class="stat-label">Server Aktif</div></div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon coral">💰</div>
+            <div><div class="stat-value" id="oMonthlyRevenue">Rp0</div><div class="stat-label">Revenue Bulan Ini</div></div>
+          </div>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="panel-card-title">📈 Order 7 Hari Terakhir</div>
+          <div class="chart-bar-wrap" id="chartBars"></div>
+        </div>
+      </div>
+
+      <!-- PTERODACTYL TAB -->
+      <div id="ownerTab-pterodactyl" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">🦕 Konfigurasi Pterodactyl</h2>
+          <p class="page-sub">Atur koneksi ke panel Pterodactyl</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="input-group">
+            <div class="form-group">
+              <label>Application API URL</label>
+              <input type="url" class="form-control" id="pteroAppUrl" placeholder="https://panel.domain.com">
+            </div>
+            <div class="form-group">
+              <label>Application API Key</label>
+              <input type="password" class="form-control" id="pteroAppKey" placeholder="ptla_xxxxx">
+            </div>
+            <div class="form-group">
+              <label>Client API URL</label>
+              <input type="url" class="form-control" id="pteroClientUrl" placeholder="https://panel.domain.com">
+            </div>
+            <div class="form-group">
+              <label>Client API Key</label>
+              <input type="password" class="form-control" id="pteroClientKey" placeholder="ptlc_xxxxx">
+            </div>
+            <div class="form-group">
+              <label>Panel Domain</label>
+              <input type="url" class="form-control" id="ptroDomain" placeholder="https://panel.domain.com">
+            </div>
+            <div class="form-group">
+              <label>Node ID</label>
+              <input type="number" class="form-control" id="pteroNodeId" value="1" min="1">
+            </div>
+            <div class="form-group">
+              <label>Nest ID</label>
+              <input type="number" class="form-control" id="pteroNestId" value="1" min="1">
+            </div>
+            <div class="form-group">
+              <label>Egg ID</label>
+              <input type="number" class="form-control" id="pteroEggId" value="15" min="1">
+            </div>
+            <div class="form-group">
+              <label>Default Allocation ID</label>
+              <input type="number" class="form-control" id="pteroAllocId" value="1" min="1">
+            </div>
+          </div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;">
+            <button class="btn btn-outline" onclick="testPterodactyl()">🔌 Test Koneksi</button>
+            <button class="btn btn-primary" onclick="savePterodactyl()">💾 Simpan</button>
+          </div>
+          <div id="pteroTestResult" style="margin-top:12px; display:none;"></div>
+        </div>
+      </div>
+
+      <!-- PRICING TAB -->
+      <div id="ownerTab-pricing" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">💰 Konfigurasi Harga</h2>
+          <p class="page-sub">Atur harga per resource</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="input-group">
+            <div class="form-group">
+              <label>Harga RAM per GB (Rp)</label>
+              <input type="number" class="form-control" id="priceRam" value="5000" min="0">
+            </div>
+            <div class="form-group">
+              <label>Harga CPU per 100% (Rp)</label>
+              <input type="number" class="form-control" id="priceCpu" value="3000" min="0">
+            </div>
+            <div class="form-group">
+              <label>Harga Disk per GB (Rp)</label>
+              <input type="number" class="form-control" id="priceDisk" value="500" min="0">
+            </div>
+            <div class="form-group">
+              <label>Harga Database per Slot (Rp)</label>
+              <input type="number" class="form-control" id="priceDb" value="2000" min="0">
+            </div>
+            <div class="form-group">
+              <label>Harga Backup per Slot (Rp)</label>
+              <input type="number" class="form-control" id="priceBackup" value="1500" min="0">
+            </div>
+            <div class="form-group">
+              <label>Multiplier Reseller</label>
+              <input type="number" class="form-control" id="priceResellerMult" value="1.5" step="0.1" min="1">
+            </div>
+            <div class="form-group">
+              <label>Harga per Slot Reseller (Rp)</label>
+              <input type="number" class="form-control" id="priceResellerSlot" value="10000" min="0">
+            </div>
+          </div>
+          <!-- Live Preview -->
+          <div style="margin-top:20px; padding:16px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:10px;">
+            <p style="color:var(--ocean-teal); font-family:'Cinzel',serif; font-size:0.85rem; margin-bottom:8px;">Preview: 4GB RAM + 200% CPU + 10GB Disk + 3DB + 3 Backup</p>
+            <p style="font-size:1.4rem; color:var(--text-primary);" id="pricingPreview">Rp 0</p>
+            <p style="color:var(--text-muted); font-size:0.8rem;">*Reseller: <span id="pricingPreviewReseller">Rp 0</span></p>
+          </div>
+          <button class="btn btn-primary" style="margin-top:16px;" onclick="savePricing()">💾 Simpan Harga</button>
+        </div>
+      </div>
+
+      <!-- PAYMENT TAB -->
+      <div id="ownerTab-payment" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">💳 Konfigurasi Pembayaran</h2>
+          <p class="page-sub">Atur metode pembayaran yang tersedia</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="form-group">
+            <label>Upload QRIS Image</label>
+            <input type="file" class="form-control" id="qrisFile" accept="image/*">
+            <div id="qrisPreview" style="margin-top:12px; display:none;">
+              <img id="qrisImg" src="" alt="QRIS" style="max-width:200px; border-radius:8px; border:1px solid var(--glass-border);">
+            </div>
+            <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="uploadQris()">📤 Upload QRIS</button>
+          </div>
+          <div class="input-group">
+            <div class="form-group">
+              <label>Nomor Dana</label>
+              <input type="text" class="form-control" id="payDana" placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="form-group">
+              <label>Nomor GoPay</label>
+              <input type="text" class="form-control" id="payGopay" placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="form-group">
+              <label>Nomor OVO</label>
+              <input type="text" class="form-control" id="payOvo" placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="form-group">
+              <label>Nomor ShopeePay</label>
+              <input type="text" class="form-control" id="payShopeepay" placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="form-group">
+              <label>Nama Bank</label>
+              <input type="text" class="form-control" id="payBankName" placeholder="BCA / Mandiri / BNI">
+            </div>
+            <div class="form-group">
+              <label>Nomor Rekening</label>
+              <input type="text" class="form-control" id="payBankAccount" placeholder="1234567890">
+            </div>
+            <div class="form-group">
+              <label>Atas Nama</label>
+              <input type="text" class="form-control" id="payBankHolder" placeholder="Nama Pemilik">
+            </div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:8px;" onclick="savePayment()">💾 Simpan Pembayaran</button>
+        </div>
+      </div>
+
+      <!-- BRANDING TAB -->
+      <div id="ownerTab-branding" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">🎨 Branding</h2>
+          <p class="page-sub">Identitas dan informasi situs</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="form-group">
+            <label>Nama Situs</label>
+            <input type="text" class="form-control" id="brandName" placeholder="Zhuu Hosting">
+          </div>
+          <div class="form-group">
+            <label>Tagline</label>
+            <input type="text" class="form-control" id="brandTagline" placeholder="Hosting Premium, Otomatis, Andal">
+          </div>
+          <div class="form-group">
+            <label>Nomor WhatsApp</label>
+            <input type="text" class="form-control" id="brandWhatsapp" placeholder="628xxxxxxxxxx">
+          </div>
+          <div class="form-group">
+            <label>URL Logo</label>
+            <input type="url" class="form-control" id="brandLogoUrl" placeholder="https://example.com/logo.png">
+          </div>
+          <button class="btn btn-primary" onclick="saveBranding()">💾 Simpan Branding</button>
+        </div>
+      </div>
+
+      <!-- USERS TAB -->
+      <div id="ownerTab-users" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">👥 Manajemen User</h2>
+          <p class="page-sub">Kelola semua akun pengguna</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Provider</th>
+                  <th>Status</th>
+                  <th>Bergabung</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="ownerUsersBody">
+                <tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">👥</div><div>Memuat...</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDERS TAB -->
+      <div id="ownerTab-orders" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">📋 Semua Order</h2>
+          <p class="page-sub">Kelola semua order dari semua user</p>
+        </div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterOwnerOrders('all', this)">Semua</button>
+          <button class="filter-btn" onclick="filterOwnerOrders('pending', this)">Pending</button>
+          <button class="filter-btn" onclick="filterOwnerOrders('active', this)">Aktif</button>
+          <button class="filter-btn" onclick="filterOwnerOrders('rejected', this)">Ditolak</button>
+          <button class="filter-btn" onclick="filterOwnerOrders('expired', this)">Expired</button>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Tipe</th>
+                  <th>Resource</th>
+                  <th>Harga</th>
+                  <th>Pembayaran</th>
+                  <th>Bukti</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="ownerOrdersBody">
+                <tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">📭</div><div>Memuat...</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Reset Password Modal -->
+  <div class="modal-overlay" id="resetPwModal">
+    <div class="glass-card modal">
+      <div class="modal-title">🔑 Reset Password User</div>
+      <input type="hidden" id="resetUserId">
+      <div class="form-group">
+        <label>Password Baru</label>
+        <input type="password" class="form-control" id="newPasswordInput" placeholder="Minimal 6 karakter">
+      </div>
+      <div style="display:flex; gap:12px;">
+        <button class="btn btn-outline" onclick="document.getElementById('resetPwModal').classList.remove('show')">Batal</button>
+        <button class="btn btn-primary" onclick="doResetPassword()">Reset Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Server Modal -->
+  <div class="modal-overlay" id="confirmServerModal">
+    <div class="glass-card modal">
+      <div class="modal-title">✅ Konfirmasi Order</div>
+      <input type="hidden" id="confirmOrderId">
+      <div class="form-group">
+        <label>Pterodactyl Server ID (Opsional)</label>
+        <input type="text" class="form-control" id="serverIdInput" placeholder="ID server jika sudah dibuat manual">
+      </div>
+      <div style="display:flex; gap:12px;">
+        <button class="btn btn-outline" onclick="document.getElementById('confirmServerModal').classList.remove('show')">Batal</button>
+        <button class="btn btn-success" onclick="doConfirmOwnerOrder()">✅ Konfirmasi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <div class="modal-overlay" id="imageModal">
+    <div style="position:relative; max-width:90vw; max-height:90vh;">
+      <button onclick="document.getElementById('imageModal').classList.remove('show')" style="position:absolute; top:-40px; right:0; background:none; border:none; color:var(--text-primary); font-size:1.5rem; cursor:pointer;">✕</button>
+      <img id="modalImg" src="" alt="Bukti Bayar" style="max-width:90vw; max-height:85vh; border-radius:12px; display:block;">
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="/js/main.js"></script>
+  <script src="/js/owner.js"></script>
+</body>
+</html>

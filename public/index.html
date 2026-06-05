@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zhuu Hosting — Hosting Premium, Otomatis, Andal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;500;700&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="ocean-bg"></div>
+  <div class="orbs-container">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+    <div class="orb orb-4"></div><div class="orb orb-5"></div><div class="orb orb-6"></div>
+  </div>
+  <div class="bubbles-container" id="bubbles">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  </div>
+  <div class="waves-container">
+    <div class="wave wave-1"></div><div class="wave wave-2"></div><div class="wave wave-3"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span class="brand-icon">🌊</span>
+      Zhuu Hosting
+    </div>
+    <ul class="navbar-nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="#pricing">Harga</a></li>
+      <li><a href="#features">Fitur</a></li>
+      <li><a href="/order" class="btn btn-primary btn-sm">Pesan Sekarang</a></li>
+      <li><a href="/login" class="btn btn-outline btn-sm">Login</a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMobileNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav -->
+  <div id="mobileNavOverlay" style="display:none; position:fixed; inset:0; background:rgba(6,13,31,0.95); backdrop-filter:blur(20px); z-index:999; align-items:center; justify-content:center; flex-direction:column; gap:20px;">
+    <button onclick="toggleMobileNav()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">✕</button>
+    <a href="/" style="font-family:'Cinzel',serif; font-size:1.2rem; color:var(--text-primary);">Home</a>
+    <a href="#pricing" onclick="toggleMobileNav()" style="font-family:'Cinzel',serif; font-size:1.2rem; color:var(--text-primary);">Harga</a>
+    <a href="#features" onclick="toggleMobileNav()" style="font-family:'Cinzel',serif; font-size:1.2rem; color:var(--text-primary);">Fitur</a>
+    <a href="/order" class="btn btn-primary">Pesan Sekarang</a>
+    <a href="/login" class="btn btn-outline">Login</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">🐠 Premium Pterodactyl Hosting</div>
+    <h1 id="heroTitle">Zhuu Hosting</h1>
+    <p class="hero-tagline" id="heroTagline">Hosting Premium, Otomatis, Andal — Deploy server Minecraft, bot Discord, dan aplikasi Anda dalam hitungan menit.</p>
+    <div class="hero-cta">
+      <a href="/order" class="btn btn-primary btn-lg">🚀 Beli Sekarang</a>
+      <a href="/login" class="btn btn-outline btn-lg">🔑 Login Panel</a>
+    </div>
+    <!-- Mini stats -->
+    <div style="display:flex; gap:48px; margin-top:56px; flex-wrap:wrap; justify-content:center;">
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem; font-weight:700; color:var(--ocean-teal);">99.9%</div>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Uptime SLA</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem; font-weight:700; color:var(--ocean-aqua);">< 5min</div>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Deploy Otomatis</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem; font-weight:700; color:var(--ocean-teal);">24/7</div>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Support Aktif</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section" id="pricing">
+    <h2 class="section-title">Pilihan Paket</h2>
+    <p class="section-sub">Harga transparan, tanpa biaya tersembunyi</p>
+    <div class="pricing-grid">
+      <div class="glass-card pricing-card">
+        <div class="pricing-icon">🐟</div>
+        <div class="pricing-name">Starter</div>
+        <div class="pricing-price">Rp25.000<span>/bln</span></div>
+        <div class="pricing-desc">Cocok untuk proyek personal dan bot Discord kecil</div>
+        <ul class="pricing-features">
+          <li>2GB RAM</li>
+          <li>100% CPU</li>
+          <li>10GB Disk</li>
+          <li>3 Database</li>
+          <li>3 Backup</li>
+          <li>Panel Pterodactyl</li>
+          <li>Deploy Otomatis</li>
+        </ul>
+        <a href="/order" class="btn btn-outline" style="width:100%;">Pilih Paket</a>
+      </div>
+
+      <div class="glass-card pricing-card featured">
+        <div class="pricing-icon">🦈</div>
+        <div class="pricing-name">Pro</div>
+        <div class="pricing-price">Rp75.000<span>/bln</span></div>
+        <div class="pricing-desc">Server game, bot kompleks, dan aplikasi web performa tinggi</div>
+        <ul class="pricing-features">
+          <li>8GB RAM</li>
+          <li>400% CPU</li>
+          <li>50GB Disk</li>
+          <li>10 Database</li>
+          <li>5 Backup</li>
+          <li>Panel Pterodactyl</li>
+          <li>Deploy Otomatis</li>
+          <li>Prioritas Support</li>
+        </ul>
+        <a href="/order" class="btn btn-primary" style="width:100%;">Pilih Paket</a>
+      </div>
+
+      <div class="glass-card pricing-card">
+        <div class="pricing-icon">🐙</div>
+        <div class="pricing-name">Reseller</div>
+        <div class="pricing-price">Rp150.000<span>/bln</span></div>
+        <div class="pricing-desc">Jual ulang hosting ke pelanggan Anda sendiri dengan panel reseller</div>
+        <ul class="pricing-features">
+          <li>16GB RAM Pool</li>
+          <li>Unlimited CPU</li>
+          <li>100GB Disk</li>
+          <li>10 Slot Server</li>
+          <li>Sub-user Management</li>
+          <li>Panel Reseller</li>
+          <li>Deploy Otomatis</li>
+          <li>Harga Komisi Fleksibel</li>
+        </ul>
+        <a href="/order" class="btn btn-outline" style="width:100%;">Pilih Paket</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <h2 class="section-title">Mengapa Zhuu Hosting?</h2>
+    <p class="section-sub">Teknologi terdepan untuk kebutuhan hosting Anda</p>
+    <div class="features-grid">
+      <div class="glass-card feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Auto Deploy</div>
+        <div class="feature-desc">Server dibuat otomatis setelah pembayaran dikonfirmasi admin. Tidak perlu menunggu setup manual berjam-jam.</div>
+      </div>
+      <div class="glass-card feature-card">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-title">99.9% Uptime</div>
+        <div class="feature-desc">Infrastruktur terdistribusi dengan monitoring 24/7 memastikan layanan Anda selalu online dan responsif.</div>
+      </div>
+      <div class="glass-card feature-card">
+        <div class="feature-icon">🏪</div>
+        <div class="feature-title">Reseller Ready</div>
+        <div class="feature-desc">Program reseller eksklusif dengan panel manajemen sub-user, pricing fleksibel, dan komisi menarik.</div>
+      </div>
+      <div class="glass-card feature-card">
+        <div class="feature-icon">🔐</div>
+        <div class="feature-title">Panel Aman</div>
+        <div class="feature-desc">Pterodactyl Panel yang diamankan dengan isolasi container, DDoS protection, dan enkripsi data end-to-end.</div>
+      </div>
+      <div class="glass-card feature-card">
+        <div class="feature-icon">💳</div>
+        <div class="feature-title">Pembayaran Mudah</div>
+        <div class="feature-desc">Dukungan QRIS, GoPay, OVO, Dana, ShopeePay, dan Transfer Bank untuk kemudahan transaksi Anda.</div>
+      </div>
+      <div class="glass-card feature-card">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-title">Multi Provider</div>
+        <div class="feature-desc">Login dengan Google, GitHub, Discord, atau email biasa. Satu akun untuk semua layanan Anda.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="text-align:center; padding-bottom:120px;">
+    <div class="glass-card" style="max-width:600px; margin:0 auto; padding:48px;">
+      <h2 style="font-size:1.8rem; color:var(--ocean-teal); margin-bottom:12px;">Siap Memulai?</h2>
+      <p style="color:var(--text-muted); margin-bottom:28px; line-height:1.6;">Bergabunglah dengan pengguna Zhuu Hosting dan rasakan perbedaan hosting premium dengan harga yang terjangkau.</p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a href="/register" class="btn btn-primary btn-lg">Daftar Gratis</a>
+        <a href="#pricing" class="btn btn-outline btn-lg">Lihat Harga</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p id="footerBrand" style="font-family:'Cinzel Decorative',cursive; font-size:1rem; color:var(--ocean-teal); margin-bottom:8px;">🌊 Zhuu Hosting</p>
+    <p id="footerTagline" style="margin-bottom:12px;">Hosting Premium, Otomatis, Andal</p>
+    <p>
+      <a id="footerWa" href="#" style="display:none;">📱 WhatsApp</a>
+    </p>
+    <p style="margin-top:12px; font-size:0.8rem;">© 2024 Zhuu Hosting. All rights reserved.</p>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="/js/main.js"></script>
+  <script>
+    function toggleMobileNav() {
+      const nav = document.getElementById('mobileNavOverlay');
+      nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+    }
+    // Load branding
+    fetch('/api/config').then(r=>r.json()).then(data=>{
+      if(data.branding) {
+        if(data.branding.siteName) document.getElementById('heroTitle').textContent = data.branding.siteName;
+        if(data.branding.tagline) document.getElementById('heroTagline').textContent = data.branding.tagline;
+        if(data.branding.whatsapp) {
+          const wa = document.getElementById('footerWa');
+          wa.href = 'https://wa.me/' + data.branding.whatsapp.replace(/\D/g,'');
+          wa.style.display = 'inline';
+        }
+        if(data.branding.siteName) document.getElementById('footerBrand').innerHTML = '🌊 ' + data.branding.siteName;
+        if(data.branding.tagline) document.getElementById('footerTagline').textContent = data.branding.tagline;
+        if(data.branding.siteName) document.title = data.branding.siteName + ' — ' + (data.branding.tagline || '');
+      }
+    }).catch(()=>{});
+  </script>
+</body>
+</html>

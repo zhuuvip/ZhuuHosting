@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Zhuu Hosting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="ocean-bg"></div>
+  <div class="orbs-container">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
+  </div>
+  <div class="bubbles-container">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  </div>
+  <div class="waves-container">
+    <div class="wave wave-1"></div><div class="wave wave-2"></div>
+  </div>
+
+  <!-- Mobile Topbar -->
+  <div class="topbar" id="topbar">
+    <span class="topbar-brand">🌊 Zhuu</span>
+    <button class="topbar-hamburger" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+      <div class="sidebar-brand">🌊 Zhuu Hosting</div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Menu Utama</div>
+        <a class="nav-item active" onclick="showTab('overview')" href="javascript:void(0)">
+          <span class="nav-icon">🏠</span> Overview
+        </a>
+        <a class="nav-item" onclick="showTab('servers')" href="javascript:void(0)">
+          <span class="nav-icon">🖥️</span> Server Aktif
+        </a>
+        <a class="nav-item" onclick="showTab('orders')" href="javascript:void(0)">
+          <span class="nav-icon">📋</span> Riwayat Order
+        </a>
+        <a class="nav-item" onclick="showTab('notifications')" href="javascript:void(0)" id="navNotif">
+          <span class="nav-icon">🔔</span> Notifikasi <span class="badge badge-pending" id="unreadBadge" style="display:none; margin-left:auto; font-size:0.65rem; padding:2px 8px;"></span>
+        </a>
+        <div id="resellerNav" style="display:none;">
+          <div class="nav-section-label">Reseller</div>
+          <a class="nav-item" onclick="showTab('reseller')" href="javascript:void(0)">
+            <span class="nav-icon">🏪</span> Panel Reseller
+          </a>
+        </div>
+        <div class="nav-section-label">Aksi</div>
+        <a class="nav-item" href="/order">
+          <span class="nav-icon">🛒</span> Order Baru
+        </a>
+        <a class="nav-item" id="adminLink" href="/admin" style="display:none;">
+          <span class="nav-icon">⚙️</span> Admin Panel
+        </a>
+        <a class="nav-item" id="ownerLink" href="/zhuu-owner-secret-2077" style="display:none;">
+          <span class="nav-icon">👑</span> Owner Panel
+        </a>
+        <a class="nav-item" href="/auth/logout">
+          <span class="nav-icon">🚪</span> Logout
+        </a>
+      </nav>
+      <div class="sidebar-user" id="sidebarUser">
+        <div class="user-avatar" id="sidebarAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebarUsername">Memuat...</div>
+          <div class="user-role" id="sidebarRole">—</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- OVERVIEW TAB -->
+      <div id="tab-overview" class="tab-panel active">
+        <div class="page-header">
+          <h2 class="page-title">Dashboard</h2>
+          <p class="page-sub">Selamat datang kembali!</p>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="glass-card welcome-card" id="welcomeCard">
+          <div class="welcome-avatar" id="welcomeAvatar">?</div>
+          <div>
+            <div class="welcome-name" id="welcomeName">Memuat...</div>
+            <div class="welcome-info" id="welcomeInfo">—</div>
+            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+              <span class="badge" id="roleBadge">user</span>
+              <a href="/order" class="btn btn-primary btn-sm">+ Order Server</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="glass-card stat-card">
+            <div class="stat-icon teal">🖥️</div>
+            <div>
+              <div class="stat-value" id="statActive">0</div>
+              <div class="stat-label">Server Aktif</div>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon aqua">⏳</div>
+            <div>
+              <div class="stat-value" id="statPending">0</div>
+              <div class="stat-label">Order Pending</div>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon gold">📋</div>
+            <div>
+              <div class="stat-value" id="statTotal">0</div>
+              <div class="stat-label">Total Order</div>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon coral">🔔</div>
+            <div>
+              <div class="stat-value" id="statUnread">0</div>
+              <div class="stat-label">Notifikasi Baru</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="glass-card panel-card">
+          <div class="panel-card-title">📋 Order Terbaru</div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Tipe</th>
+                  <th>Resource</th>
+                  <th>Harga</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="recentOrdersBody">
+                <tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">📭</div><div>Belum ada order</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVERS TAB -->
+      <div id="tab-servers" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">🖥️ Server Aktif</h2>
+          <p class="page-sub">Daftar server yang sedang aktif</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Server ID</th>
+                  <th>RAM</th>
+                  <th>CPU</th>
+                  <th>Disk</th>
+                  <th>Aktif Hingga</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="serversBody">
+                <tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">🌊</div><div>Belum ada server aktif</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDERS TAB -->
+      <div id="tab-orders" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">📋 Riwayat Order</h2>
+          <p class="page-sub">Semua order Anda</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Tipe</th>
+                  <th>RAM</th>
+                  <th>CPU</th>
+                  <th>Disk</th>
+                  <th>Harga</th>
+                  <th>Pembayaran</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="ordersBody">
+                <tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">📭</div><div>Belum ada order</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS TAB -->
+      <div id="tab-notifications" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">🔔 Notifikasi</h2>
+          <p class="page-sub">Pemberitahuan terbaru untuk Anda</p>
+        </div>
+        <div id="notifList"></div>
+      </div>
+
+      <!-- RESELLER TAB -->
+      <div id="tab-reseller" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">🏪 Panel Reseller</h2>
+          <p class="page-sub">Kelola bisnis hosting Anda</p>
+        </div>
+        <div class="stats-grid">
+          <div class="glass-card stat-card">
+            <div class="stat-icon teal">🔑</div>
+            <div>
+              <div class="stat-value" id="resellerSlotsUsed">0</div>
+              <div class="stat-label">Slot Digunakan</div>
+            </div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon aqua">📦</div>
+            <div>
+              <div class="stat-value" id="resellerSlotsTotal">0</div>
+              <div class="stat-label">Total Slot</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="panel-card-title">👥 Sub Users</div>
+          <p style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:20px;">Fitur sub-user reseller akan tersedia setelah aktivasi. Hubungi admin untuk info lebih lanjut.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="/js/main.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

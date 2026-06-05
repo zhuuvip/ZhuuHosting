@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Zhuu Hosting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="ocean-bg"></div>
+  <div class="orbs-container">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
+  </div>
+  <div class="bubbles-container">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+  </div>
+  <div class="waves-container">
+    <div class="wave wave-1"></div><div class="wave wave-2"></div>
+  </div>
+
+  <!-- Topbar mobile -->
+  <div class="topbar" id="topbar">
+    <span class="topbar-brand">⚙️ Admin</span>
+    <button class="topbar-hamburger" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+      <div class="sidebar-brand">⚙️ Admin Panel</div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Admin Menu</div>
+        <a class="nav-item active" onclick="showAdminTab('stats')" href="javascript:void(0)"><span class="nav-icon">📊</span> Statistik</a>
+        <a class="nav-item" onclick="showAdminTab('orders')" href="javascript:void(0)"><span class="nav-icon">📋</span> Kelola Order</a>
+        <a class="nav-item" onclick="showAdminTab('users')" href="javascript:void(0)"><span class="nav-icon">👥</span> Kelola User</a>
+        <div class="nav-section-label">Navigasi</div>
+        <a class="nav-item" href="/dashboard"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a class="nav-item" id="ownerLinkAdmin" href="/zhuu-owner-secret-2077" style="display:none;"><span class="nav-icon">👑</span> Owner Panel</a>
+        <a class="nav-item" href="/auth/logout"><span class="nav-icon">🚪</span> Logout</a>
+      </nav>
+      <div class="sidebar-user" id="sidebarUser">
+        <div class="user-avatar" id="sidebarAvatar">A</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebarUsername">Admin</div>
+          <div class="user-role" id="sidebarRole">admin</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- STATS TAB -->
+      <div id="adminTab-stats" class="tab-panel active">
+        <div class="page-header">
+          <h2 class="page-title">📊 Statistik</h2>
+          <p class="page-sub">Ringkasan sistem Zhuu Hosting</p>
+        </div>
+        <div class="stats-grid">
+          <div class="glass-card stat-card">
+            <div class="stat-icon teal">👥</div>
+            <div><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Total User</div></div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon gold">⏳</div>
+            <div><div class="stat-value" id="pendingOrders">0</div><div class="stat-label">Pending Order</div></div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon aqua">🖥️</div>
+            <div><div class="stat-value" id="activeServers">0</div><div class="stat-label">Server Aktif</div></div>
+          </div>
+          <div class="glass-card stat-card">
+            <div class="stat-icon coral">💰</div>
+            <div><div class="stat-value" id="monthlyRevenue">Rp0</div><div class="stat-label">Revenue Bulan Ini</div></div>
+          </div>
+        </div>
+        <div class="glass-card panel-card" style="margin-top:8px;">
+          <div class="panel-card-title">⚡ Quick Actions</div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="showAdminTab('orders')">Lihat Order Pending</button>
+            <button class="btn btn-outline" onclick="showAdminTab('users')">Kelola User</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDERS TAB -->
+      <div id="adminTab-orders" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">📋 Kelola Order</h2>
+          <p class="page-sub">Konfirmasi, tolak, atau hapus order</p>
+        </div>
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterOrders('all', this)">Semua</button>
+          <button class="filter-btn" onclick="filterOrders('pending', this)">Pending</button>
+          <button class="filter-btn" onclick="filterOrders('active', this)">Aktif</button>
+          <button class="filter-btn" onclick="filterOrders('rejected', this)">Ditolak</button>
+          <button class="filter-btn" onclick="filterOrders('expired', this)">Expired</button>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Tipe</th>
+                  <th>Resource</th>
+                  <th>Harga</th>
+                  <th>Pembayaran</th>
+                  <th>Bukti</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersBody">
+                <tr><td colspan="8"><div class="empty-state"><div class="empty-state-icon">📭</div><div>Memuat...</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS TAB -->
+      <div id="adminTab-users" class="tab-panel">
+        <div class="page-header">
+          <h2 class="page-title">👥 Kelola User</h2>
+          <p class="page-sub">Manajemen akun pengguna</p>
+        </div>
+        <div class="glass-card panel-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Provider</th>
+                  <th>Status</th>
+                  <th>Bergabung</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersBody">
+                <tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">👥</div><div>Memuat...</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Image Modal -->
+  <div class="modal-overlay" id="imageModal">
+    <div style="position:relative; max-width:90vw; max-height:90vh;">
+      <button onclick="document.getElementById('imageModal').classList.remove('show')" style="position:absolute; top:-40px; right:0; background:none; border:none; color:var(--text-primary); font-size:1.5rem; cursor:pointer;">✕</button>
+      <img id="modalImg" src="" alt="Bukti Bayar" style="max-width:90vw; max-height:85vh; border-radius:12px; display:block;">
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="/js/main.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

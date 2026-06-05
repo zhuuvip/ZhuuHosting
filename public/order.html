@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Server — Zhuu Hosting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="ocean-bg"></div>
+  <div class="orbs-container">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
+  </div>
+  <div class="bubbles-container">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div>
+  </div>
+  <div class="waves-container">
+    <div class="wave wave-1"></div><div class="wave wave-2"></div><div class="wave wave-3"></div>
+  </div>
+
+  <div class="order-container">
+    <h1 class="order-page-title">🛒 Pesan Server</h1>
+    <p style="text-align:center; color:var(--text-muted); margin-bottom:32px;">Konfigurasi dan pesan server hosting Anda</p>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="step active" id="step1Indicator">
+        <div class="step-circle">1</div>
+        <div class="step-label">Tipe</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step" id="step2Indicator">
+        <div class="step-circle">2</div>
+        <div class="step-label">Resource</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step" id="step3Indicator">
+        <div class="step-circle">3</div>
+        <div class="step-label">Pembayaran</div>
+      </div>
+    </div>
+
+    <div class="glass-card" style="padding:32px;">
+      <!-- STEP 1: TYPE -->
+      <div class="step-content active" id="stepContent1">
+        <h3 style="font-family:'Cinzel',serif; color:var(--ocean-teal); margin-bottom:8px; font-size:1rem;">Pilih Tipe Server</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:24px;">Pilih tipe hosting yang sesuai kebutuhan Anda</p>
+        <div class="type-selector">
+          <div class="type-card selected" id="typeRegular" onclick="selectType('regular')">
+            <div class="type-card-icon">🖥️</div>
+            <div class="type-card-name">Regular User</div>
+            <div class="type-card-desc">Server pribadi untuk game, bot, atau aplikasi Anda. Harga terjangkau dengan performa optimal.</div>
+          </div>
+          <div class="type-card" id="typeReseller" onclick="selectType('reseller')">
+            <div class="type-card-icon">🏪</div>
+            <div class="type-card-name">Reseller</div>
+            <div class="type-card-desc">Kelola beberapa server dan jual ke pelanggan. Dapatkan akses panel reseller eksklusif.</div>
+          </div>
+        </div>
+        <div class="step-nav">
+          <a href="/dashboard" class="btn btn-outline">← Kembali</a>
+          <button class="btn btn-primary" onclick="goToStep(2)">Lanjut →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: RESOURCES -->
+      <div class="step-content" id="stepContent2">
+        <h3 style="font-family:'Cinzel',serif; color:var(--ocean-teal); margin-bottom:8px; font-size:1rem;">Pilih Resource</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:24px;">Sesuaikan spesifikasi server dengan kebutuhan Anda</p>
+
+        <div class="input-group">
+          <div class="form-group">
+            <label>RAM</label>
+            <select class="form-control" id="ramSelect" onchange="calculatePrice()">
+              <option value="1024">1 GB RAM</option>
+              <option value="2048">2 GB RAM</option>
+              <option value="4096" selected>4 GB RAM</option>
+              <option value="8192">8 GB RAM</option>
+              <option value="16384">16 GB RAM</option>
+              <option value="32768">32 GB RAM</option>
+              <option value="0">Unlimited RAM</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>CPU</label>
+            <select class="form-control" id="cpuSelect" onchange="calculatePrice()">
+              <option value="50">50% CPU</option>
+              <option value="100">100% CPU</option>
+              <option value="200" selected>200% CPU</option>
+              <option value="400">400% CPU</option>
+              <option value="0">Unlimited CPU</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Disk</label>
+            <select class="form-control" id="diskSelect" onchange="calculatePrice()">
+              <option value="5120">5 GB Disk</option>
+              <option value="10240" selected>10 GB Disk</option>
+              <option value="20480">20 GB Disk</option>
+              <option value="51200">50 GB Disk</option>
+              <option value="102400">100 GB Disk</option>
+              <option value="0">Unlimited Disk</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Database</label>
+            <select class="form-control" id="dbSelect" onchange="calculatePrice()">
+              <option value="1">1 Database</option>
+              <option value="3" selected>3 Database</option>
+              <option value="5">5 Database</option>
+              <option value="10">10 Database</option>
+              <option value="0">Unlimited</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Backup</label>
+            <select class="form-control" id="backupSelect" onchange="calculatePrice()">
+              <option value="1">1 Backup</option>
+              <option value="3" selected>3 Backup</option>
+              <option value="5">5 Backup</option>
+              <option value="0">Unlimited</option>
+            </select>
+          </div>
+          <div class="form-group" id="slotsGroup" style="display:none;">
+            <label>Slot Server (Reseller)</label>
+            <select class="form-control" id="slotsSelect" onchange="calculatePrice()">
+              <option value="5">5 Slot</option>
+              <option value="10" selected>10 Slot</option>
+              <option value="25">25 Slot</option>
+              <option value="50">50 Slot</option>
+              <option value="0">Unlimited</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="price-display">
+          <div class="price-label">Total Harga per Bulan</div>
+          <div class="price-total" id="priceTotal">Rp 0</div>
+          <div class="price-per-month">30 hari · Bisa diperpanjang</div>
+        </div>
+
+        <div class="step-nav">
+          <button class="btn btn-outline" onclick="goToStep(1)">← Kembali</button>
+          <button class="btn btn-primary" onclick="goToStep(3)">Lanjut →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: PAYMENT -->
+      <div class="step-content" id="stepContent3">
+        <h3 style="font-family:'Cinzel',serif; color:var(--ocean-teal); margin-bottom:8px; font-size:1rem;">Pembayaran</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:24px;">Pilih metode pembayaran dan upload bukti transfer</p>
+
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px; font-family:'Cinzel',serif; color:var(--ocean-teal);">Metode Pembayaran</p>
+        <div class="payment-methods">
+          <div class="payment-card" onclick="selectPayment('qris')" id="pay-qris">
+            <div class="payment-card-icon">📱</div>
+            <div class="payment-card-name">QRIS</div>
+          </div>
+          <div class="payment-card" onclick="selectPayment('dana')" id="pay-dana">
+            <div class="payment-card-icon">💙</div>
+            <div class="payment-card-name">Dana</div>
+          </div>
+          <div class="payment-card" onclick="selectPayment('gopay')" id="pay-gopay">
+            <div class="payment-card-icon">💚</div>
+            <div class="payment-card-name">GoPay</div>
+          </div>
+          <div class="payment-card" onclick="selectPayment('ovo')" id="pay-ovo">
+            <div class="payment-card-icon">💜</div>
+            <div class="payment-card-name">OVO</div>
+          </div>
+          <div class="payment-card" onclick="selectPayment('shopeepay')" id="pay-shopeepay">
+            <div class="payment-card-icon">🧡</div>
+            <div class="payment-card-name">ShopeePay</div>
+          </div>
+          <div class="payment-card" onclick="selectPayment('bank')" id="pay-bank">
+            <div class="payment-card-icon">🏦</div>
+            <div class="payment-card-name">Bank</div>
+          </div>
+        </div>
+
+        <div class="payment-details" id="paymentDetails">
+          <div id="paymentContent"></div>
+        </div>
+
+        <div class="form-group" style="margin-top:16px;">
+          <label>Username Pterodactyl Panel</label>
+          <input type="text" class="form-control" id="pterodactylUsername" placeholder="Username di panel Pterodactyl Anda">
+          <small style="color:var(--text-muted); font-size:0.8rem; margin-top:4px; display:block;">Masukkan username akun Pterodactyl Anda, atau biarkan kosong jika belum punya (akan dibuat otomatis)</small>
+        </div>
+
+        <div class="form-group">
+          <label>Upload Bukti Pembayaran</label>
+          <input type="file" class="form-control" id="paymentProof" accept="image/*">
+          <small style="color:var(--text-muted); font-size:0.8rem; margin-top:4px; display:block;">Format: JPG, PNG, GIF (Maks. 5MB)</small>
+        </div>
+
+        <div id="previewImg" style="margin-bottom:16px; display:none;">
+          <img id="proofPreview" src="" alt="Preview" style="max-width:200px; border-radius:8px; border:1px solid var(--glass-border);">
+        </div>
+
+        <div class="price-display" style="margin-bottom:24px;">
+          <div class="price-label">Total yang Harus Dibayar</div>
+          <div class="price-total" id="priceFinal">Rp 0</div>
+          <div class="price-per-month">Transfer sesuai nominal di atas</div>
+        </div>
+
+        <div id="submitAlert" class="alert alert-error"></div>
+        <div id="submitSuccess" class="alert alert-success"></div>
+
+        <div class="step-nav">
+          <button class="btn btn-outline" onclick="goToStep(2)">← Kembali</button>
+          <button class="btn btn-primary" id="submitBtn" onclick="submitOrder()">🚀 Kirim Order</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center; margin-top:20px;">
+      <a href="/dashboard" style="color:var(--text-muted); font-size:0.9rem;">← Kembali ke Dashboard</a>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="/js/main.js"></script>
+  <script src="/js/order.js"></script>
+</body>
+</html>
