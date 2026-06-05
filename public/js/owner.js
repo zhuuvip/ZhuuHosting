@@ -460,3 +460,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('active');
+}
