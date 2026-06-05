@@ -54,7 +54,8 @@ router.post('/login', (req, res, next) => {
     req.logIn(user, (err2) => {
       if (err2) return next(err2);
       setJwtCookie(res, user);
-      res.json({ success: true, redirect: '/dashboard' });
+      const tok = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+      res.json({ success: true, redirect: '/dashboard', token: tok });
     });
   })(req, res, next);
 });

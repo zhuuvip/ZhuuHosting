@@ -1,3 +1,22 @@
+
+// Auth helper
+function getToken() { return localStorage.getItem('zhuu_token'); }
+function setToken(t) { localStorage.setItem('zhuu_token', t); }
+function clearToken() { localStorage.removeItem('zhuu_token'); }
+
+async function apiFetch(url, options = {}) {
+  const token = getToken();
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  try {
+    const res = await fetch(url, { ...options, headers });
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } catch(e) {
+    return { ok: false, data: {} };
+  }
+}
+
 // ===== ORDER.JS =====
 let currentStep = 1;
 let selectedType = 'regular';

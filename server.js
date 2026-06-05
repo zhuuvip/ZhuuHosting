@@ -136,6 +136,23 @@ app.get('/api/config', (req, res) => {
 });
 
 app.get('/api/auth/me', (req, res) => {
+  // Check JWT from Authorization header OR cookie
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const jwt = require('jsonwebtoken');
+    const JWT_SECRET = process.env.SESSION_SECRET || 'zhuu_secret_2077';
+    try {
+      const decoded = jwt.verify(authHeader.slice(7), JWT_SECRET);
+      const db = readDb();
+      const user = db.users.find(u => u.id === decoded.id);
+      if (user) {
+        const { password, ...safeUser } = user;
+        const ownerEmail = process.env.OWNER_EMAIL || 'zhuusite@gmail.com';
+        if (user.email === ownerEmail) safeUser.role = 'owner';
+        return res.json({ loggedIn: true, user: safeUser });
+      }
+    } catch(e) {}
+  }
   if (!req.user) return res.json({ loggedIn: false });
   const { password, ...safeUser } = req.user;
   res.json({ loggedIn: true, user: safeUser });

@@ -1,3 +1,6 @@
+function getToken() { return localStorage.getItem('zhuu_token'); }
+function setToken(t) { localStorage.setItem('zhuu_token', t); }
+function clearToken() { localStorage.removeItem('zhuu_token'); }
 // ===== MAIN.JS — Shared utilities =====
 
 function showToast(message, type = 'info', duration = 4000) {
