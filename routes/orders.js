@@ -6,8 +6,8 @@ const path = require('path');
 const { requireLogin, requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
-const DB_PATH = path.join(__dirname, '..', 'db.json');
-const UPLOADS_PATH = path.join(__dirname, '..', 'uploads');
+const DB_PATH = path.join('/tmp', 'db.json');
+const UPLOADS_PATH = path.join('/tmp', 'uploads');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

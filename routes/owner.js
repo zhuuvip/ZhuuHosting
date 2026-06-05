@@ -6,9 +6,9 @@ const { requireOwner } = require('../middleware/authMiddleware');
 const { testConnection } = require('./pterodactyl');
 
 const router = express.Router();
-const CONFIG_PATH = path.join(__dirname, '..', 'config.json');
-const DB_PATH = path.join(__dirname, '..', 'db.json');
-const UPLOADS_PATH = path.join(__dirname, '..', 'uploads');
+const CONFIG_PATH = path.join('/tmp', 'config.json');
+const DB_PATH = path.join('/tmp', 'db.json');
+const UPLOADS_PATH = path.join('/tmp', 'uploads');
 
 const qrisStorage = multer.diskStorage({
   destination: (req, file, cb) => {

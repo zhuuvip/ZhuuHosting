@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_PATH = path.join(__dirname, '..', 'config.json');
+const CONFIG_PATH = path.join('/tmp', 'config.json');
 
 function requireLogin(req, res, next) {
   if (req.isAuthenticated && req.isAuthenticated()) {

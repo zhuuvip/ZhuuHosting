@@ -2,7 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_PATH = path.join(__dirname, '..', 'config.json');
+const CONFIG_PATH = path.join('/tmp', 'config.json');
 
 function loadConfig() {
   if (!fs.existsSync(CONFIG_PATH)) return null;

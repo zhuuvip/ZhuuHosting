@@ -4,7 +4,7 @@ const path = require('path');
 const { requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
-const DB_PATH = path.join(__dirname, '..', 'db.json');
+const DB_PATH = path.join('/tmp', 'db.json');
 
 function readDb() {
   if (!fs.existsSync(DB_PATH)) {
