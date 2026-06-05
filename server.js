@@ -130,6 +130,8 @@ app.get('/api/auth/me', (req, res) => {
   res.json({ loggedIn: true, user: safeUser });
 });
 
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'public', 'register.html')));
 app.get('/order', authMiddleware.requireLogin, (req, res) => res.sendFile(path.join(__dirname, 'public', 'order.html')));
 app.get('/dashboard', authMiddleware.requireLogin, (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/admin', authMiddleware.requireAdmin, (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
