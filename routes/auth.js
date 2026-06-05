@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.SESSION_SECRET || 'zhuu_secret_2077';
 function setJwtCookie(res, user) {
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-  res.cookie('zhuu_token', token, { httpOnly: true, maxAge: 7*24*60*60*1000, sameSite: 'lax' });
+  res.cookie('zhuu_token', token, { httpOnly: true, maxAge: 7*24*60*60*1000, sameSite: 'none', secure: true });
 }
 
 function readDb() {
