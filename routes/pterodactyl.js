@@ -1,13 +1,5 @@
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-
-const CONFIG_PATH = path.join('/tmp', 'config.json');
-
-function loadConfig() {
-  if (!fs.existsSync(CONFIG_PATH)) return null;
-  return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-}
+const { User, getConfig } = require('../models');
 
 async function getUserIdByUsername(apiUrl, apiKey, username) {
   try {
@@ -19,14 +11,12 @@ async function getUserIdByUsername(apiUrl, apiKey, username) {
       return res.data.data[0].attributes.id;
     }
     return null;
-  } catch (e) {
-    return null;
-  }
+  } catch (e) { return null; }
 }
 
-async function deployServer(order, db) {
+async function deployServer(order) {
   try {
-    const config = loadConfig();
+    const config = await getConfig();
     if (!config || !config.pterodactyl || !config.pterodactyl.applicationApiUrl || !config.pterodactyl.applicationApiKey) {
       return { success: false, error: 'Pterodactyl tidak dikonfigurasi.' };
     }
@@ -35,7 +25,7 @@ async function deployServer(order, db) {
     const apiUrl = ptero.applicationApiUrl.replace(/\/$/, '');
     const apiKey = ptero.applicationApiKey;
 
-    const user = db.users.find(u => u.id === order.userId);
+    const user = await User.findOne({ id: order.userId }).lean();
     const pteroUsername = order.pterodactylUsername || (user ? user.username : 'user');
 
     let pteroUserId = await getUserIdByUsername(apiUrl, apiKey, pteroUsername);
@@ -58,9 +48,7 @@ async function deployServer(order, db) {
       }
     }
 
-    if (!pteroUserId) {
-      return { success: false, error: 'User Pterodactyl tidak ditemukan.' };
-    }
+    if (!pteroUserId) return { success: false, error: 'User Pterodactyl tidak ditemukan.' };
 
     const ram = parseInt(order.resources.ram) || 1024;
     const cpu = parseInt(order.resources.cpu) || 100;
@@ -68,32 +56,16 @@ async function deployServer(order, db) {
     const databases = parseInt(order.resources.databases) || 1;
     const backups = parseInt(order.resources.backups) || 1;
 
-    const serverName = `${pteroUsername}-${Date.now()}`;
-
     const body = {
-      name: serverName,
+      name: `${pteroUsername}-${Date.now()}`,
       user: pteroUserId,
       egg: parseInt(ptero.eggId) || 15,
       docker_image: 'ghcr.io/pterodactyl/yolks:java_17',
       startup: 'java -Xms128M -Xmx{{SERVER_MEMORY}}M -jar {{SERVER_JARFILE}}',
-      environment: {
-        SERVER_JARFILE: 'server.jar',
-        VANILLA_VERSION: 'latest'
-      },
-      limits: {
-        memory: ram === 0 ? 0 : ram,
-        swap: 0,
-        disk: disk === 0 ? 0 : disk,
-        io: 500,
-        cpu: cpu === 0 ? 0 : cpu
-      },
-      feature_limits: {
-        databases: databases,
-        backups: backups
-      },
-      allocation: {
-        default: parseInt(ptero.allocationId) || 1
-      }
+      environment: { SERVER_JARFILE: 'server.jar', VANILLA_VERSION: 'latest' },
+      limits: { memory: ram, swap: 0, disk, io: 500, cpu },
+      feature_limits: { databases, backups },
+      allocation: { default: parseInt(ptero.allocationId) || 1 }
     };
 
     const res = await axios.post(`${apiUrl}/api/application/servers`, body, {
@@ -114,7 +86,7 @@ async function deployServer(order, db) {
 async function testConnection(config) {
   try {
     const ptero = config.pterodactyl;
-    if (!ptero.applicationApiUrl || !ptero.applicationApiKey) {
+    if (!ptero || !ptero.applicationApiUrl || !ptero.applicationApiKey) {
       return { success: false, error: 'API URL dan Key belum diisi.' };
     }
     const apiUrl = ptero.applicationApiUrl.replace(/\/$/, '');

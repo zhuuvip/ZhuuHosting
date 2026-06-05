@@ -1,89 +1,55 @@
-const fs = require('fs');
-const path = require('path');
+const jwt = require('jsonwebtoken');
 
-const CONFIG_PATH = path.join('/tmp', 'config.json');
+function getJwtUser(req) {
+  const auth = req.headers['authorization'];
+  if (auth && auth.startsWith('Bearer ')) {
+    try {
+      return jwt.verify(auth.slice(7), process.env.SESSION_SECRET || 'zhuu_secret_2077');
+    } catch (e) { return null; }
+  }
+  return req.user || null;
+}
 
 function requireLogin(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
-
-function requireAdmin(req, res, next) {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
+  // For API routes return JSON, for page routes redirect
+  const isApi = req.path.startsWith('/api') || req.headers['content-type'] === 'application/json' || req.headers['authorization'];
+  const user = getJwtUser(req);
+  if (!user) {
+    if (isApi) return res.status(401).json({ error: 'Unauthorized. Silakan login.' });
     return res.redirect('/login');
   }
-  if (req.user.role === 'admin' || req.user.role === 'owner') {
-    return next();
-  }
-  res.redirect('/dashboard');
-}
-
-function requireOwner(req, res, next) {
-  if (!req.isAuthenticated || !req.isAuthenticated()) {
-    return res.redirect('/login');
-  }
-  if (req.user.email === process.env.OWNER_EMAIL) {
-    req.user.role = 'owner';
-    return next();
-  }
-  res.redirect('/dashboard');
-}
-
-function attachConfig(req, res, next) {
-  try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      const raw = fs.readFileSync(CONFIG_PATH, 'utf8');
-      req.config = JSON.parse(raw);
-    } else {
-      req.config = getDefaultConfig();
-    }
-  } catch (e) {
-    req.config = getDefaultConfig();
-  }
+  req.jwtUser = user;
   next();
 }
 
-function getDefaultConfig() {
-  return {
-    pterodactyl: {
-      applicationApiUrl: '',
-      applicationApiKey: '',
-      clientApiUrl: '',
-      clientApiKey: '',
-      panelDomain: '',
-      nodeId: 1,
-      nestId: 1,
-      eggId: 15,
-      allocationId: 1
-    },
-    pricing: {
-      ramPerGb: 5000,
-      cpuPer100: 3000,
-      diskPerGb: 500,
-      databaseSlot: 2000,
-      backupSlot: 1500,
-      resellerMultiplier: 1.5,
-      resellerSlotPrice: 10000
-    },
-    payment: {
-      qrisImage: '',
-      danaNumber: '',
-      gopayNumber: '',
-      ovoNumber: '',
-      shopeepayNumber: '',
-      bankName: '',
-      bankAccount: '',
-      bankHolder: ''
-    },
-    branding: {
-      siteName: 'Zhuu Hosting',
-      tagline: 'Hosting Premium, Otomatis, Andal',
-      whatsapp: '',
-      logoUrl: ''
-    }
-  };
+function requireAdmin(req, res, next) {
+  const isApi = req.path.startsWith('/api') || req.headers['authorization'];
+  const user = getJwtUser(req);
+  if (!user) {
+    if (isApi) return res.status(401).json({ error: 'Unauthorized.' });
+    return res.redirect('/login');
+  }
+  if (user.role !== 'admin' && user.role !== 'owner' && user.email !== process.env.OWNER_EMAIL) {
+    if (isApi) return res.status(403).json({ error: 'Akses ditolak.' });
+    return res.redirect('/dashboard');
+  }
+  req.jwtUser = user;
+  next();
 }
 
-module.exports = { requireLogin, requireAdmin, requireOwner, attachConfig, getDefaultConfig };
+function requireOwner(req, res, next) {
+  const isApi = req.path.startsWith('/api') || req.headers['authorization'];
+  const user = getJwtUser(req);
+  if (!user) {
+    if (isApi) return res.status(401).json({ error: 'Unauthorized.' });
+    return res.redirect('/login');
+  }
+  if (user.email !== process.env.OWNER_EMAIL) {
+    if (isApi) return res.status(403).json({ error: 'Akses ditolak.' });
+    return res.redirect('/dashboard');
+  }
+  req.jwtUser = user;
+  next();
+}
+
+module.exports = { requireLogin, requireAdmin, requireOwner, getJwtUser };

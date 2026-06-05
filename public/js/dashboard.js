@@ -1,26 +1,29 @@
+// ===== TOKEN HELPERS =====
+function getToken(){return localStorage.getItem('zhuu_token')}
+function setToken(t){localStorage.setItem('zhuu_token',t)}
+function clearToken(){localStorage.removeItem('zhuu_token')}
+async function apiFetch(url,options={}){const token=getToken();const headers={'Content-Type':'application/json',...(options.headers||{})};if(token)headers['Authorization']='Bearer '+token;try{const res=await fetch(url,{...options,headers});const data=await res.json().catch(()=>({}));return{ok:res.ok,data,status:res.status}}catch(e){return{ok:false,data:{},status:0}}}
 
-// Auth helper
-function getToken() { return localStorage.getItem('zhuu_token'); }
-function setToken(t) { localStorage.setItem('zhuu_token', t); }
-function clearToken() { localStorage.removeItem('zhuu_token'); }
+// ===== SIDEBAR =====
+function toggleSidebar(){const s=document.getElementById('sidebar');const o=document.getElementById('sidebarOverlay');if(s)s.classList.toggle('open');if(o)o.classList.toggle('active')}
 
-async function apiFetch(url, options = {}) {
-  const token = getToken();
-  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  try {
-    const res = await fetch(url, { ...options, headers });
-    const data = await res.json();
-    return { ok: res.ok, data };
-  } catch(e) {
-    return { ok: false, data: {} };
-  }
-}
-
-// ===== DASHBOARD.JS =====
+// ===== DASHBOARD =====
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Handle ?token= from OAuth redirect
+  const params = new URLSearchParams(window.location.search);
+  const tokenParam = params.get('token');
+  if (tokenParam) {
+    setToken(tokenParam);
+    window.history.replaceState({}, document.title, '/dashboard');
+  }
+
+  if (!getToken()) {
+    window.location.href = '/login';
+    return;
+  }
+
   await loadUser();
   await loadOrders();
   await loadNotifications();
@@ -28,8 +31,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadUser() {
-  const { ok, data } = await apiFetch('/api/auth/me');
+  const { ok, data } = await apiFetch('/auth/me');
   if (!ok) {
+    clearToken();
     window.location.href = '/login';
     return;
   }
@@ -41,22 +45,21 @@ function renderUserInfo() {
   const u = currentUser;
   if (!u) return;
 
-  // Sidebar
   const avatarEl = document.getElementById('sidebarAvatar');
-  if (u.avatar) {
-    avatarEl.innerHTML = `<img src="${u.avatar}" alt="avatar">`;
-  } else {
-    avatarEl.textContent = (u.username || '?')[0].toUpperCase();
+  if (avatarEl) {
+    if (u.avatar) avatarEl.innerHTML = `<img src="${u.avatar}" alt="avatar">`;
+    else avatarEl.textContent = (u.username || '?')[0].toUpperCase();
   }
   const usernameEl = document.getElementById('sidebarUsername');
   if (usernameEl) usernameEl.textContent = u.username;
   const roleEl = document.getElementById('sidebarRole');
   if (roleEl) roleEl.textContent = u.role;
 
-  // Welcome card
   const welcomeAvatar = document.getElementById('welcomeAvatar');
-  if (u.avatar) welcomeAvatar.innerHTML = `<img src="${u.avatar}" alt="avatar">`;
-  else welcomeAvatar.textContent = (u.username || '?')[0].toUpperCase();
+  if (welcomeAvatar) {
+    if (u.avatar) welcomeAvatar.innerHTML = `<img src="${u.avatar}" alt="avatar">`;
+    else welcomeAvatar.textContent = (u.username || '?')[0].toUpperCase();
+  }
   const welcomeName = document.getElementById('welcomeName');
   if (welcomeName) welcomeName.textContent = 'Halo, ' + u.username + '!';
   const welcomeInfo = document.getElementById('welcomeInfo');
@@ -64,7 +67,6 @@ function renderUserInfo() {
   const roleBadgeEl = document.getElementById('roleBadge');
   if (roleBadgeEl) roleBadgeEl.outerHTML = roleBadgeHtml(u.role);
 
-  // Show admin/owner links
   if (u.role === 'admin' || u.role === 'owner') {
     const al = document.getElementById('adminLink');
     if (al) al.style.display = 'flex';
@@ -84,15 +86,16 @@ async function loadOrders() {
   if (!ok) return;
   const orders = data.orders || [];
 
-  // Stats
   const active = orders.filter(o => o.status === 'active').length;
   const pending = orders.filter(o => o.status === 'pending').length;
 
-  document.getElementById('statActive').textContent = active;
-  document.getElementById('statPending').textContent = pending;
-  document.getElementById('statTotal').textContent = orders.length;
+  const s1 = document.getElementById('statActive');
+  const s2 = document.getElementById('statPending');
+  const s3 = document.getElementById('statTotal');
+  if (s1) s1.textContent = active;
+  if (s2) s2.textContent = pending;
+  if (s3) s3.textContent = orders.length;
 
-  // Recent orders (last 5)
   const recent = [...orders].reverse().slice(0, 5);
   const recentBody = document.getElementById('recentOrdersBody');
   if (recentBody) {
@@ -111,7 +114,6 @@ async function loadOrders() {
     }
   }
 
-  // All orders tab
   const ordersBody = document.getElementById('ordersBody');
   if (ordersBody) {
     if (orders.length === 0) {
@@ -132,7 +134,6 @@ async function loadOrders() {
     }
   }
 
-  // Servers tab (active only)
   const serversBody = document.getElementById('serversBody');
   const activeOrders = orders.filter(o => o.status === 'active');
   if (serversBody) {
@@ -147,20 +148,19 @@ async function loadOrders() {
           <td>${o.resources ? (o.resources.disk === '0' ? '∞' : Math.round(parseInt(o.resources.disk)/1024) + ' GB') : '—'}</td>
           <td>${formatDate(o.expiredAt)}</td>
           <td>${statusBadge(o.status)}</td>
-          <td>
-            ${o.pterodactylServerId ? `<a href="#" class="btn btn-outline btn-sm">🔗 Panel</a>` : '<span style="color:var(--text-muted); font-size:0.8rem;">Menunggu setup</span>'}
-          </td>
+          <td>${o.pterodactylServerId ? `<a href="#" class="btn btn-outline btn-sm">🔗 Panel</a>` : '<span style="color:var(--text-muted); font-size:0.8rem;">Menunggu setup</span>'}</td>
         </tr>
       `).join('');
     }
   }
 
-  // Reseller stats
   if (currentUser && (currentUser.role === 'reseller' || currentUser.role === 'owner')) {
     const resellerOrder = activeOrders.find(o => o.type === 'reseller');
     const totalSlots = resellerOrder ? (parseInt(resellerOrder.resources.slots) || 0) : 0;
-    document.getElementById('resellerSlotsTotal').textContent = totalSlots === 0 ? '∞' : totalSlots;
-    document.getElementById('resellerSlotsUsed').textContent = '0';
+    const rst = document.getElementById('resellerSlotsTotal');
+    const rsu = document.getElementById('resellerSlotsUsed');
+    if (rst) rst.textContent = totalSlots === 0 ? '∞' : totalSlots;
+    if (rsu) rsu.textContent = '0';
   }
 }
 
@@ -170,16 +170,13 @@ async function loadNotifications() {
   const notifs = data.notifications || [];
   const unread = notifs.filter(n => !n.read).length;
 
-  document.getElementById('statUnread').textContent = unread;
+  const su = document.getElementById('statUnread');
+  if (su) su.textContent = unread;
 
   const badge = document.getElementById('unreadBadge');
   if (badge) {
-    if (unread > 0) {
-      badge.textContent = unread;
-      badge.style.display = 'inline-block';
-    } else {
-      badge.style.display = 'none';
-    }
+    if (unread > 0) { badge.textContent = unread; badge.style.display = 'inline-block'; }
+    else badge.style.display = 'none';
   }
 
   const notifList = document.getElementById('notifList');
@@ -217,9 +214,15 @@ function showTab(tabName) {
   if (panel) panel.classList.add('active');
 }
 
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  if (sidebar) sidebar.classList.toggle('open');
-  if (overlay) overlay.classList.toggle('active');
+function logout() {
+  clearToken();
+  window.location.href = '/';
 }
+
+// Shared helpers (also in main.js — kept here so dashboard.html works standalone)
+function formatRupiah(amount) { return 'Rp ' + Number(amount).toLocaleString('id-ID'); }
+function formatDate(dateStr) { if (!dateStr) return '—'; return new Date(dateStr).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); }
+function formatDateTime(dateStr) { if (!dateStr) return '—'; return new Date(dateStr).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+function statusBadge(status) { const map = { pending:'<span class="badge badge-pending">⏳ Pending</span>', active:'<span class="badge badge-active">✅ Aktif</span>', expired:'<span class="badge badge-expired">⌛ Expired</span>', rejected:'<span class="badge badge-rejected">❌ Ditolak</span>' }; return map[status]||`<span class="badge">${status}</span>`; }
+function roleBadgeHtml(role) { const map = { user:'<span class="badge badge-user">User</span>', reseller:'<span class="badge badge-reseller">Reseller</span>', admin:'<span class="badge badge-admin">Admin</span>', owner:'<span class="badge badge-owner">👑 Owner</span>' }; return map[role]||`<span class="badge">${role}</span>`; }
+function resourceSummary(resources) { if (!resources) return '—'; const ram = resources.ram==='0'?'∞':Math.round(parseInt(resources.ram)/1024)+'GB'; const cpu = resources.cpu==='0'?'∞':resources.cpu+'%'; const disk = resources.disk==='0'?'∞':Math.round(parseInt(resources.disk)/1024)+'GB'; return `${ram} RAM · ${cpu} CPU · ${disk} Disk`; }

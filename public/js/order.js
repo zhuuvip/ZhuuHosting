@@ -1,29 +1,20 @@
+// ===== TOKEN HELPERS =====
+function getToken(){return localStorage.getItem('zhuu_token')}
+function setToken(t){localStorage.setItem('zhuu_token',t)}
+function clearToken(){localStorage.removeItem('zhuu_token')}
+async function apiFetch(url,options={}){const token=getToken();const headers={'Content-Type':'application/json',...(options.headers||{})};if(token)headers['Authorization']='Bearer '+token;try{const res=await fetch(url,{...options,headers});const data=await res.json().catch(()=>({}));return{ok:res.ok,data,status:res.status}}catch(e){return{ok:false,data:{},status:0}}}
 
-// Auth helper
-function getToken() { return localStorage.getItem('zhuu_token'); }
-function setToken(t) { localStorage.setItem('zhuu_token', t); }
-function clearToken() { localStorage.removeItem('zhuu_token'); }
+// ===== SIDEBAR =====
+function toggleSidebar(){const s=document.getElementById('sidebar');const o=document.getElementById('sidebarOverlay');if(s)s.classList.toggle('open');if(o)o.classList.toggle('active')}
 
-async function apiFetch(url, options = {}) {
-  const token = getToken();
-  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
-  if (token) headers['Authorization'] = 'Bearer ' + token;
-  try {
-    const res = await fetch(url, { ...options, headers });
-    const data = await res.json();
-    return { ok: res.ok, data };
-  } catch(e) {
-    return { ok: false, data: {} };
-  }
-}
-
-// ===== ORDER.JS =====
+// ===== ORDER =====
 let currentStep = 1;
 let selectedType = 'regular';
 let selectedPayment = '';
 let pricingConfig = {};
 
 async function init() {
+  if (!getToken()) { window.location.href = '/login'; return; }
   try {
     const res = await fetch('/api/config');
     const data = await res.json();
@@ -39,7 +30,8 @@ function selectType(type) {
   selectedType = type;
   document.getElementById('typeRegular').classList.toggle('selected', type === 'regular');
   document.getElementById('typeReseller').classList.toggle('selected', type === 'reseller');
-  document.getElementById('slotsGroup').style.display = type === 'reseller' ? 'block' : 'none';
+  const sg = document.getElementById('slotsGroup');
+  if (sg) sg.style.display = type === 'reseller' ? 'block' : 'none';
   calculatePrice();
 }
 
@@ -72,52 +64,34 @@ function calculatePrice() {
     total = base * resMult;
     if (slots !== 0) total += slots * slotPrice;
   }
-
   total = Math.ceil(total);
 
-  const fmt = formatRupiah(total);
+  const fmt = 'Rp ' + Number(total).toLocaleString('id-ID');
   const el1 = document.getElementById('priceTotal');
   const el2 = document.getElementById('priceFinal');
   if (el1) el1.textContent = fmt;
   if (el2) el2.textContent = fmt;
-
   window._currentPrice = total;
 }
 
 function goToStep(step) {
-  if (step === 3 && !selectedPayment) {
-    // OK to proceed, they pick payment on step 3
-  }
-
   document.getElementById(`stepContent${currentStep}`).classList.remove('active');
   document.getElementById(`step${currentStep}Indicator`).classList.remove('active');
-
   currentStep = step;
-
   document.getElementById(`stepContent${currentStep}`).classList.add('active');
   document.getElementById(`step${currentStep}Indicator`).classList.add('active');
 
-  // Mark completed steps
   for (let i = 1; i <= 3; i++) {
     const ind = document.getElementById(`step${i}Indicator`);
-    if (i < step) {
-      ind.classList.add('completed');
-      ind.classList.remove('active');
-    } else if (i === step) {
-      ind.classList.add('active');
-      ind.classList.remove('completed');
-    } else {
-      ind.classList.remove('active', 'completed');
-    }
+    if (!ind) continue;
+    if (i < step) { ind.classList.add('completed'); ind.classList.remove('active'); }
+    else if (i === step) { ind.classList.add('active'); ind.classList.remove('completed'); }
+    else { ind.classList.remove('active', 'completed'); }
   }
-
-  // Lines
   for (let i = 1; i <= 2; i++) {
     const line = document.getElementById(`line${i}`);
     if (line) line.classList.toggle('active', i < step);
   }
-
-  // Update final price display
   calculatePrice();
 }
 
@@ -149,14 +123,12 @@ function selectPayment(method) {
             <p class="payment-number">${nums[method] || 'Belum dikonfigurasi'}</p>`;
   }
 
-  contentEl.innerHTML = html;
-  detailsEl.classList.add('show');
+  if (contentEl) contentEl.innerHTML = html;
+  if (detailsEl) detailsEl.classList.add('show');
 }
 
-// Preview proof image
 document.addEventListener('DOMContentLoaded', () => {
   init();
-
   const proofInput = document.getElementById('paymentProof');
   if (proofInput) {
     proofInput.addEventListener('change', (e) => {
@@ -164,8 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (file) {
         const reader = new FileReader();
         reader.onload = (ev) => {
-          document.getElementById('proofPreview').src = ev.target.result;
-          document.getElementById('previewImg').style.display = 'block';
+          const preview = document.getElementById('proofPreview');
+          const previewImg = document.getElementById('previewImg');
+          if (preview) preview.src = ev.target.result;
+          if (previewImg) previewImg.style.display = 'block';
         };
         reader.readAsDataURL(file);
       }
@@ -176,25 +150,21 @@ document.addEventListener('DOMContentLoaded', () => {
 async function submitOrder() {
   const alertEl = document.getElementById('submitAlert');
   const successEl = document.getElementById('submitSuccess');
-  alertEl.classList.remove('show');
-  successEl.classList.remove('show');
+  if (alertEl) alertEl.classList.remove('show');
+  if (successEl) successEl.classList.remove('show');
 
   if (!selectedPayment) {
-    alertEl.textContent = 'Pilih metode pembayaran.';
-    alertEl.classList.add('show');
+    if (alertEl) { alertEl.textContent = 'Pilih metode pembayaran.'; alertEl.classList.add('show'); }
     return;
   }
-
   const proofFile = document.getElementById('paymentProof').files[0];
   if (!proofFile) {
-    alertEl.textContent = 'Upload bukti pembayaran terlebih dahulu.';
-    alertEl.classList.add('show');
+    if (alertEl) { alertEl.textContent = 'Upload bukti pembayaran terlebih dahulu.'; alertEl.classList.add('show'); }
     return;
   }
 
   const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Mengirim...';
+  if (btn) { btn.disabled = true; btn.textContent = 'Mengirim...'; }
 
   const formData = new FormData();
   formData.append('type', selectedType);
@@ -203,32 +173,30 @@ async function submitOrder() {
   formData.append('disk', document.getElementById('diskSelect').value);
   formData.append('databases', document.getElementById('dbSelect').value);
   formData.append('backups', document.getElementById('backupSelect').value);
-  if (selectedType === 'reseller') {
-    formData.append('slots', document.getElementById('slotsSelect').value);
-  }
+  if (selectedType === 'reseller') formData.append('slots', document.getElementById('slotsSelect').value);
   formData.append('paymentMethod', selectedPayment);
   formData.append('pterodactylUsername', document.getElementById('pterodactylUsername').value.trim());
   formData.append('price', window._currentPrice || 0);
   formData.append('paymentProof', proofFile);
 
   try {
-    const res = await fetch('/api/orders/create', { method: 'POST', body: formData });
+    const token = getToken();
+    const headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const res = await fetch('/api/orders/create', { method: 'POST', body: formData, headers });
     const data = await res.json();
     if (data.success) {
-      successEl.textContent = '🎉 ' + data.message;
-      successEl.classList.add('show');
-      btn.textContent = 'Order Terkirim!';
+      if (successEl) { successEl.textContent = '🎉 ' + data.message; successEl.classList.add('show'); }
+      if (btn) btn.textContent = 'Order Terkirim!';
       setTimeout(() => window.location.href = '/dashboard', 2500);
     } else {
-      alertEl.textContent = data.error || 'Gagal mengirim order.';
-      alertEl.classList.add('show');
-      btn.disabled = false;
-      btn.textContent = '🚀 Kirim Order';
+      if (alertEl) { alertEl.textContent = data.error || 'Gagal mengirim order.'; alertEl.classList.add('show'); }
+      if (btn) { btn.disabled = false; btn.textContent = '🚀 Kirim Order'; }
     }
   } catch (err) {
-    alertEl.textContent = 'Koneksi error. Coba lagi.';
-    alertEl.classList.add('show');
-    btn.disabled = false;
-    btn.textContent = '🚀 Kirim Order';
+    if (alertEl) { alertEl.textContent = 'Koneksi error. Coba lagi.'; alertEl.classList.add('show'); }
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 Kirim Order'; }
   }
 }
+
+function logout() { clearToken(); window.location.href = '/'; }
