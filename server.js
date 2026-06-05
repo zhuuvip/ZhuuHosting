@@ -3,6 +3,8 @@ const express = require('express');
 const session = require('express-session');
 
 const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
@@ -52,6 +54,7 @@ function writeConfig(data) {
 if (!fs.existsSync(UPLOADS_PATH)) { try { fs.mkdirSync(UPLOADS_PATH, { recursive: true }); } catch(e) {} }
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
