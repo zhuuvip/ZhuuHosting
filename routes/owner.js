@@ -9,7 +9,7 @@ const { testConnection } = require('./pterodactyl');
 const { User, Order, Notification, getConfig, saveConfig } = require('../models');
 
 const router = express.Router();
-const UPLOADS_PATH = path.join(__dirname, '..', 'uploads');
+const UPLOADS_PATH = '/tmp/uploads';
 
 const qrisStorage = multer.diskStorage({
   destination: (req, file, cb) => {
