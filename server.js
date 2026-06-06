@@ -1,3 +1,4 @@
+try {
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
@@ -247,3 +248,5 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
   console.error('UNHANDLED:', err);
 });
+
+} catch(e) { console.error('STARTUP ERROR:', e.message, e.stack); const express = require('express'); const app = express(); app.use((req,res) => res.status(500).send('Error: ' + e.message)); module.exports = app; }
