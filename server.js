@@ -29,7 +29,7 @@ if (process.env.MONGODB_URI) {
 const { User, Order, Notification, Config, getConfig, saveConfig } = require('./models');
 
 // Ensure uploads dir exists
-if (!fs.existsSync(UPLOADS_PATH)) fs.mkdirSync(UPLOADS_PATH, { recursive: true });
+try { if (!fs.existsSync(UPLOADS_PATH)) fs.mkdirSync(UPLOADS_PATH, { recursive: true }); } catch(e) { console.log("uploads dir skip:", e.message); }
 
 // Core middlewares
 app.use(express.json());
