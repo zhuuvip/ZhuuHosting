@@ -17,7 +17,7 @@ const mongoose = require('mongoose');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.SESSION_SECRET || 'zhuu_secret_2077';
-const UPLOADS_PATH = path.join(__dirname, 'uploads');
+const UPLOADS_PATH = '/tmp/uploads';
 
 // Connect MongoDB
 if (process.env.MONGODB_URI) {
